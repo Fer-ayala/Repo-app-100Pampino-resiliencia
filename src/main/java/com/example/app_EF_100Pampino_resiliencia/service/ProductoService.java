@@ -16,7 +16,10 @@ public class ProductoService implements IProductoService {
 
     @Override
     public List<Producto> obtenerProductos() {
-        return productoRepository.findAll();
+        if(Math.random()>0.5) {
+            return productoRepository.findAll();
+        }
+        throw new RuntimeException("Error en llamada");
     }
 
     @Override

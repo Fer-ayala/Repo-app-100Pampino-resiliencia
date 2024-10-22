@@ -3,6 +3,7 @@ package com.example.app_EF_100Pampino_resiliencia.controller;
 import com.example.app_EF_100Pampino_resiliencia.exception.ResourceNotFoundException;
 import com.example.app_EF_100Pampino_resiliencia.model.Producto;
 import com.example.app_EF_100Pampino_resiliencia.service.IProductoService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,15 @@ public class ProductoController {
     private IProductoService iProductoService;
 
     @GetMapping("/listar")
+    @CircuitBreaker(name = "myService", fallbackMethod = "errorListar")
     public ResponseEntity<List<Producto>> listarProductos(){
 
         List<Producto> lista = iProductoService.obtenerProductos();
         return new ResponseEntity<>(lista, HttpStatus.OK);
+    }
+
+    public String errorListar(Throwable throwable){
+        return "Servicio temporalmente no disponible. Intentalo de nuevo";
     }
 
     @PostMapping("/registrar")
